@@ -63,8 +63,8 @@ def display_initial_ai_message():
     初期メッセージと注意書きの吹き出し
     """
     with st.chat_message("assistant"):
-        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。")
-        st.info("※注意：本サービスは社内情報のみに基づいて回答します。機密情報の取り扱いにはご注意ください。")
+        st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。サイドバーで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+        st.warning("具体的に入力した方が期待通りの回答が得やすいです", icon="⚠️")
 
 
 def display_conversation_log():

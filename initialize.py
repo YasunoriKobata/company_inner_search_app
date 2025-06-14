@@ -19,6 +19,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import constants as ct
+import pandas as pd  # 追加
 
 
 ############################################################
@@ -211,6 +212,21 @@ def file_load(path, docs_all):
     file_extension = os.path.splitext(path)[1]
     # ファイル名（拡張子を含む）を取得
     file_name = os.path.basename(path)
+
+    # CSVファイルで「社員名簿.csv」の場合は特別処理
+    if file_extension == ".csv" and "社員名簿" in file_name:
+        # pandasでCSVを読み込み
+        df = pd.read_csv(path, encoding="utf-8")
+        # ヘッダー行を取得
+        header = list(df.columns)
+        # 各行を「,」区切りで連結し、1つのテキストにまとめる
+        rows = [", ".join([f"{col}:{str(val)}" for col, val in zip(header, row)]) for row in df.values]
+        # まとめたテキストを1つのドキュメントとして扱う
+        text = "\n".join(rows)
+        from langchain_core.documents import Document
+        doc = Document(page_content=text, metadata={"source": path})
+        docs_all.append(doc)
+        return
 
     # 想定していたファイル形式の場合のみ読み込む
     if file_extension in ct.SUPPORTED_EXTENSIONS:
