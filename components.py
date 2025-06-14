@@ -179,8 +179,7 @@ def display_search_llm_response(llm_response):
         # ==========================================
         # メインドキュメント以外で、関連性が高いサブドキュメントを格納する用のリストを用意
         sub_choices = []
-        # 重複チェック用のリストを用意
-
+        duplicate_check_list = []  # ←これが必要
         # ドキュメントが2件以上検索できた場合（サブドキュメントが存在する場合）のみ、サブドキュメントのありかを一覧表示
         # 「source_documents」内のリストの2番目以降をスライスで参照（2番目以降がなければfor文内の処理は実行されない）
         for document in llm_response["context"][1:]:
