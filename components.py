@@ -14,9 +14,31 @@ import constants as ct
 # 関数定義
 ############################################################
 
+def display_sidebar():
+    """
+    サイドバーに利用目的の選択と説明・入力例を表示
+    """
+    with st.sidebar:
+        st.markdown("### 利用目的を選択")
+        st.session_state.mode = st.radio(
+            label="利用目的",
+            options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
+            index=0,
+        )
+        st.markdown("---")
+        if st.session_state.mode == ct.ANSWER_MODE_1:
+            st.markdown("**社内文書検索**")
+            st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+            st.code("【入力例】\n社員の育成方針に関するMTGの議事録", wrap_lines=True, language=None)
+        else:
+            st.markdown("**社内問い合わせ**")
+            st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+            st.code("【入力例】\n人事部に所属している従業員情報を一覧化して", wrap_lines=True, language=None)
+
+
 def display_app_title():
     """
-    タイトル表示
+    メイン画面タイトル表示
     """
     st.markdown(f"## {ct.APP_NAME}")
 
@@ -38,24 +60,11 @@ def display_select_mode():
 
 def display_initial_ai_message():
     """
-    AIメッセージの初期表示
+    初期メッセージと注意書きの吹き出し
     """
     with st.chat_message("assistant"):
-        # 「st.success()」とすると緑枠で表示される
-        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
-
-        # 「社内文書検索」の機能説明
-        st.markdown("**【「社内文書検索」を選択した場合】**")
-        # 「st.info()」を使うと青枠で表示される
-        st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
-        # 「st.code()」を使うとコードブロックの装飾で表示される
-        # 「wrap_lines=True」で折り返し設定、「language=None」で非装飾とする
-        st.code("【入力例】\n社員の育成方針に関するMTGの議事録", wrap_lines=True, language=None)
-
-        # 「社内問い合わせ」の機能説明
-        st.markdown("**【「社内問い合わせ」を選択した場合】**")
-        st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
-        st.code("【入力例】\n人事部に所属している従業員情報を一覧化して", wrap_lines=True, language=None)
+        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。")
+        st.info("※注意：本サービスは社内情報のみに基づいて回答します。機密情報の取り扱いにはご注意ください。")
 
 
 def display_conversation_log():
@@ -171,7 +180,6 @@ def display_search_llm_response(llm_response):
         # メインドキュメント以外で、関連性が高いサブドキュメントを格納する用のリストを用意
         sub_choices = []
         # 重複チェック用のリストを用意
-        duplicate_check_list = []
 
         # ドキュメントが2件以上検索できた場合（サブドキュメントが存在する場合）のみ、サブドキュメントのありかを一覧表示
         # 「source_documents」内のリストの2番目以降をスライスで参照（2番目以降がなければfor文内の処理は実行されない）
